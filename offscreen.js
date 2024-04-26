@@ -3,8 +3,18 @@ let socket = null;
 let isDefaultConfigurationSent = false;
 let softphone = null;
 let sessions = null;
+let session = null;
 let softphoneInstanseId = null;
 const DEFAULT_CONFIGURATION = {};
+
+navigator.mediaDevices.getUserMedia({
+    audio: {
+      mandatory: {
+        chromeMediaSource: 'tab',
+        // chromeMediaSourceId: streamId
+      }
+    }
+  })
 
 // const setDefaultConfigurations = () => {
 //   isConfigurationSent = true;
@@ -65,25 +75,82 @@ const requestToCallByUserId = ({
         .then(result => result);
 }
 
+const initSession = (event) => {
+    session = event.session;
+
+    session.on('progress', function (event){
+      console.log('Progress ... Ringing ... ');
+    })
+
+    session.on('sdp', function (event){
+      if (event.originator === 'remote' && event.type === 'answer'){
+        console.log('Answer');
+        
+      }
+    })
+
+    session.on('ended', function (event){
+      console.log(event);
+      session = {}
+    });
+
+    session.on('failed', function (event){
+      console.log(event);
+      session = {}
+    });
+
+    setInterval(checkActiveSession, 1000);
+
+    function checkActiveSession(){
+      let id = session._id ?? 0;
+      if (id !== 0 && !sessions[id]){
+        session = {}
+      }
+    }
+}
+  
+
+const handleAudio = (stream) => {
+    console.log('New audio stream');
+                let audio = document.createElement("audio");
+                audio.style.display = 'none';
+                audio.autoplay = true;
+                audio.playsinline = true;
+                audio.srcObject = stream;
+                audio.onloadedmetadata = function () {
+                    let audio = stream.getAudioTracks();
+                    for (let i = 0; i < audio.length; ++i) {
+                        audio[i].enabled = true;
+                    }
+                };
+                audio.id = 'audio';
+                // let multimedia = document.getElementById('softphone-app');
+                // multimedia.appendChild(audio);
+
+                // let volumeInput = document.getElementById('dynamicVolumeControl');
+                // volumeInput.addEventListener('input', function() {
+                //   const volume = parseInt(this.value) / 100;
+                //   audio.volume = volume;
+                // });
+}
+
 chrome.runtime.onMessage.addListener(( message , sender, sendResponse) => {
       const {type, host} = message;
   if(type === "INITIALIZATION") {
     if(isDefaultConfigurationSent) return;
 
-    console.log(host)
-    socket = new JsSIP.WebSocketInterface('wss://' + "sip1.hetzner.tst.oxtech.org" + ':8089/ws');
+    socket = new JsSIP.WebSocketInterface("wss://sip1.hetzner.tst.oxtech.org:8089/ws");
     DEFAULT_CONFIGURATION.configuration = {...message};
-    DEFAULT_CONFIGURATION.configuration.sockets = [socket];
-    DEFAULT_CONFIGURATION.host = message.host;
-    softphone =  new JsSIP.UA(DEFAULT_CONFIGURATION.configuration);
-
+    DEFAULT_CONFIGURATION.configuration.sockets = [ socket ];
+    DEFAULT_CONFIGURATION.host = host;
+    softphone = new JsSIP.UA(DEFAULT_CONFIGURATION.configuration);
+    sessions = softphone._sessions;
+    session = {};
     softphone.register();
     softphone.start();
 
-
-    sessions = softphone._sessions;
+    
     isDefaultConfigurationSent = true;
-
     
     softphone.on('connected', function(e){
         console.log('Agent connected');
@@ -92,16 +159,17 @@ chrome.runtime.onMessage.addListener(( message , sender, sendResponse) => {
 
     softphone.on('registered', function(e) {
         console.log('Registration completed');
+        console.log(e);
       });
 
     softphone.on('unregistered', function(e){
-    console.log('Registration cancel');
-    console.log(e);
+        console.log('Registration cancel');
+        console.log(e);
     });
 
     softphone.on('registrationFailed', function(e){
-    console.log('Registration failed');
-    console.log(e);
+        console.log('Registration failed');
+        console.log(e);
     });
 
     softphone.on('disconnected', function(event){
@@ -112,17 +180,19 @@ chrome.runtime.onMessage.addListener(( message , sender, sendResponse) => {
         console.log('New session');
         console.log(e);
 
-        // sessions._connection.ontrack = function (event) {
-        //     console.log('ontrack: ' + event.track.kind + ' - ' + event.track.id + 'stream ' + event.streams[0].id);
-        //     console.log(event)
-        //     // for (let i = 0; i < event.streams.length; ++i) {
-        //     //   self.handleAudio(event.streams[i]);
-        //     // }
-        //   };
+        initSession(e);
+
+        e.session._connection.ontrack = function (event) {
+            console.log('ontrack: ' + event.track.kind + ' - ' + event.track.id + 'stream ' + event.streams[0].id);
+            console.log(event)
+            // for (let i = 0; i < event.streams.length; ++i) {
+            //     handleAudio(event.streams[i]);
+            // }
+          };
     })
     
     // softphone.start();
-    softphone.call('sip:' + "380662972033" + '@' + DEFAULT_CONFIGURATION.host)
+    // softphone.call('sip:' + "380662972033" + '@' + DEFAULT_CONFIGURATION.host);
 
     // if(type === "OUTGOING_CALL") {
     //     const {brand, userId} = event.data.userInformation;
