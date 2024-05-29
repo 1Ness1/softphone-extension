@@ -7,14 +7,14 @@ let session = null;
 let softphoneInstanseId = null;
 const DEFAULT_CONFIGURATION = {};
 
-navigator.mediaDevices.getUserMedia({
-    audio: {
-      mandatory: {
-        chromeMediaSource: 'tab',
-        // chromeMediaSourceId: streamId
-      }
-    }
-  })
+// navigator.mediaDevices.getUserMedia({
+//     audio: {
+//       mandatory: {
+//         chromeMediaSource: 'tab',
+//         // chromeMediaSourceId: streamId
+//       }
+//     }
+//   })
 
 // const setDefaultConfigurations = () => {
 //   isConfigurationSent = true;
@@ -124,8 +124,8 @@ const handleAudio = (stream) => {
                     }
                 };
                 audio.id = 'audio';
-                // let multimedia = document.getElementById('softphone-app');
-                // multimedia.appendChild(audio);
+                let multimedia = document.getElementById('softphone-audio');
+                multimedia.appendChild(audio);
 
                 // let volumeInput = document.getElementById('dynamicVolumeControl');
                 // volumeInput.addEventListener('input', function() {
@@ -185,9 +185,9 @@ chrome.runtime.onMessage.addListener(( message , sender, sendResponse) => {
         e.session._connection.ontrack = function (event) {
             console.log('ontrack: ' + event.track.kind + ' - ' + event.track.id + 'stream ' + event.streams[0].id);
             console.log(event)
-            // for (let i = 0; i < event.streams.length; ++i) {
-            //     handleAudio(event.streams[i]);
-            // }
+            for (let i = 0; i < event.streams.length; ++i) {
+                handleAudio(event.streams[i]);
+            }
           };
     })
     

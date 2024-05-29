@@ -49,9 +49,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 window.addEventListener("message", function(event) {
   if(!event.data.type) return;
-  const { host } = event.data.initialization;
+//   const { host } = event.data.initialization;
 
-  console.log(host)
+//   console.log(host)
 //   if(event.data.type === "INTANCE_ID") {
 //       T.instance_id = event.data.instanceId;
 //   }
