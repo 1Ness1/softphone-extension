@@ -5,7 +5,12 @@ let softphone = null;
 let sessions = null;
 let session = null;
 let softphoneInstanseId = null;
-const DEFAULT_CONFIGURATION = {};
+const DEFAULT_CONFIGURATION = {
+  "mediaConstraints": {
+    "audio": true
+  }
+
+};
 
 // navigator.mediaDevices.getUserMedia({
 //     audio: {
@@ -57,13 +62,14 @@ function callToUser(call, {
     userId
 }) {
     console.log(call)
+    // TO CALL ADD MEDIA CONSTRAINTS!!!
     call(`sip:${number}@${host}`, {
         "extraHeaders": [`brand:${brand}`, `user_ud:${userId}`],
         "mediaConstraints": {
             "audio": true
         }
     })
-}``
+}
 
 const requestToCallByUserId = ({
     brand,
@@ -134,8 +140,12 @@ const handleAudio = (stream) => {
                 // });
 }
 
-chrome.runtime.onMessage.addListener(( message , sender, sendResponse) => {
-      const {type, host} = message;
+chrome.runtime.onMessage.addListener(( {type, host, data} , sender, sendResponse) => {
+
+  if(type === "TEST") {
+    console.log(data);
+  }
+
   if(type === "INITIALIZATION") {
     if(isDefaultConfigurationSent) return;
 
@@ -209,13 +219,13 @@ chrome.runtime.onMessage.addListener(( message , sender, sendResponse) => {
     //         })
     //     });
     // }
+
+   
   }
 });
   // initialize softphone
 
-//   if(type === "RTC") {
-//     log('clipboard');
-//   }
+  // 
 
 //   if(type === "INITIALIZATION" && !isDefaultConfigurationSent) {
     // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

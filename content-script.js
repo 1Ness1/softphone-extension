@@ -9,20 +9,20 @@ const T = {
     instance_id: null,
 }
 
-function callToUser(call, {
-    number,
-    host,
-    brand,
-    userId
-}) {
-    console.log(call)
-    call(`sip:${number}@${host}`, {
-        "extraHeaders": [`brand:${brand}`, `user_ud:${userId}`],
-        "mediaConstraints": {
-            "audio": true
-        }
-    })
-}``
+// function callToUser(call, {
+//     number,
+//     host,
+//     brand,
+//     userId
+// }) {
+//     console.log(call)
+//     call(`sip:${number}@${host}`, {
+//         "extraHeaders": [`brand:${brand}`, `user_ud:${userId}`],
+//         "mediaConstraints": {
+//             "audio": true
+//         }
+//     })
+// }``
 
 const requestToCallByUserId = ({
     brand,
