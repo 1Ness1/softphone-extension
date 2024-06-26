@@ -6,10 +6,9 @@ let sessions = null;
 let session = null;
 let softphoneInstanseId = null;
 const DEFAULT_CONFIGURATION = {
-  "mediaConstraints": {
+  _mediaConstraints: {
     "audio": true
   }
-
 };
 
 // navigator.mediaDevices.getUserMedia({
@@ -55,31 +54,31 @@ const DEFAULT_CONFIGURATION = {
 //         isDefaultConfigurationSent = true;
 //       }
 // })
-function callToUser(call, {
-    number,
-    host,
-    brand,
-    userId
-}) {
-    console.log(call)
-    // TO CALL ADD MEDIA CONSTRAINTS!!!
-    call(`sip:${number}@${host}`, {
-        "extraHeaders": [`brand:${brand}`, `user_ud:${userId}`],
-        "mediaConstraints": {
-            "audio": true
-        }
-    })
-}
+// function callToUser(call, {
+//     number,
+//     host,
+//     brand,
+//     userId
+// }) {
+//     console.log(call)
+//     // TO CALL ADD MEDIA CONSTRAINTS!!!
+//     call(`sip:${number}@${host}`, {
+//         "extraHeaders": [`brand:${brand}`, `user_ud:${userId}`],
+//         "mediaConstraints": {
+//             "audio": true
+//         }
+//     })
+// }
 
-const requestToCallByUserId = ({
-    brand,
-    userId
-                               }) => {
-    const URL = `https://${window.location.host}/api_user_data_by_phone/phonebyId?brand=${brand}&user=${userId}`;
-    return fetch(URL)
-        .then(data => data.json())
-        .then(result => result);
-}
+// const requestToCallByUserId = ({
+//     brand,
+//     userId
+//                                }) => {
+//     const URL = `https://${window.location.host}/api_user_data_by_phone/phonebyId?brand=${brand}&user=${userId}`;
+//     return fetch(URL)
+//         .then(data => data.json())
+//         .then(result => result);
+// }
 
 const initSession = (event) => {
     session = event.session;
@@ -91,7 +90,6 @@ const initSession = (event) => {
     session.on('sdp', function (event){
       if (event.originator === 'remote' && event.type === 'answer'){
         console.log('Answer');
-        
       }
     })
 
@@ -115,7 +113,6 @@ const initSession = (event) => {
     }
 }
   
-
 const handleAudio = (stream) => {
     console.log('New audio stream');
                 let audio = document.createElement("audio");
@@ -140,26 +137,36 @@ const handleAudio = (stream) => {
                 // });
 }
 
-chrome.runtime.onMessage.addListener(( {type, host, data} , sender, sendResponse) => {
-
-  if(type === "TEST") {
-    console.log(data);
+class Softphone {
+  constructor() {
+    this.socket = new JsSIP.WebSocketInterface(`wss://${DEFAULT_CONFIGURATION.host}:8089/ws`);
+    DEFAULT_CONFIGURATION.configuration = {...data};
+    DEFAULT_CONFIGURATION.configuration.sockets = [this.socket];
+    DEFAULT_CONFIGURATION.host = data.host;
+    this._instanse = new JsSip.UA(DEFAULT_CONFIGURATION.configuration);
+    this.sessions = this._instanse.sessions;
+    this.session = {};
+    this._instanse.register();
+    this._instanse.start();
   }
+}
 
+chrome.runtime.onMessage.addListener((data , sender, sendResponse) => {
+  const { type } = data;
+  // INITIALIZATON OF SOFTPHONE
   if(type === "INITIALIZATION") {
     if(isDefaultConfigurationSent) return;
 
     socket = new JsSIP.WebSocketInterface("wss://sip1.hetzner.tst.oxtech.org:8089/ws");
-    DEFAULT_CONFIGURATION.configuration = {...message};
+    DEFAULT_CONFIGURATION.configuration = {...data};
     DEFAULT_CONFIGURATION.configuration.sockets = [ socket ];
-    DEFAULT_CONFIGURATION.host = host;
+    DEFAULT_CONFIGURATION.host = data.host;
     softphone = new JsSIP.UA(DEFAULT_CONFIGURATION.configuration);
     sessions = softphone._sessions;
     session = {};
     softphone.register();
     softphone.start();
 
-    
     isDefaultConfigurationSent = true;
     
     softphone.on('connected', function(e){
@@ -186,13 +193,14 @@ chrome.runtime.onMessage.addListener(( {type, host, data} , sender, sendResponse
         console.log('Agent disconnected');
     })
 
-    softphone.on('newRTCSession', function(e){
+    // TODO: MOVE EVENT TO METHOD
+    softphone.on('newRTCSession', function(rtcSessionEvent){
         console.log('New session');
-        console.log(e);
+        console.log(rtcSessionEvent);
 
-        initSession(e);
+        initSession(rtcSessionEvent);
 
-        e.session._connection.ontrack = function (event) {
+        rtcSessionEvent.session._connection.ontrack = function (event) {
             console.log('ontrack: ' + event.track.kind + ' - ' + event.track.id + 'stream ' + event.streams[0].id);
             console.log(event)
             for (let i = 0; i < event.streams.length; ++i) {
@@ -222,6 +230,12 @@ chrome.runtime.onMessage.addListener(( {type, host, data} , sender, sendResponse
 
    
   }
+
+  if(type === "OUTGOING_CALL") {
+    softphone.call(`sip:${data.number}@${DEFAULT_CONFIGURATION.host}`, {
+      mediaConstraints: DEFAULT_CONFIGURATION._mediaConstraints
+    });
+  }
 });
   // initialize softphone
 
@@ -247,12 +261,6 @@ chrome.runtime.onMessage.addListener(( {type, host, data} , sender, sendResponse
     // softphone =  new JsSIP.UA(DEFAULT_CONFIGURATION.configuration);
     // sessions = softphone._sessions;
 
-    
-//   }
-
-//   if(type === "SET_INSTANCE_ID") {
-    // softphoneInstanseId = message.instance.instanceId;
-//   }
 
 //   if(type === "OUTGOING_CALL") {
 //     console.log(softphone)

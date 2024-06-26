@@ -20,13 +20,13 @@
 //     }
 //     }
 
-document.addEventListener("retrievePageVariable", () => {
-    document.dispatchEvent(
-      new CustomEvent("variableRetrieved", {
-        detail: webPageVariable,
-      }),
-    );
-  });
+// document.addEventListener("retrievePageVariable", () => {
+//     document.dispatchEvent(
+//       new CustomEvent("variableRetrieved", {
+//         detail: webPageVariable,
+//       }),
+//     );
+//   });
 //
 // var data = { type: "FROM_PAGEs", text: {
 //   host: window.location.host,
