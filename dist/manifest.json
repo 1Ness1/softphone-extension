@@ -3,11 +3,11 @@
     "version": "0.1",
     "name": "softphone",
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "serviceWorker.js"
     },
     "action": {
         "default_title": "Click to show an alert",
-        "default_popup": "popup.html"
+        "default_popup": "./popup.html"
     },
     "permissions": [
         "tabs",
@@ -24,15 +24,14 @@
                 "https://support.casino.oxg.local/*"
             ],
             "js": [
-                "/library/jsSIP/jssip-3.10.0.min.js",
-                "content-script.js"
+                "./contentScript.js"
             ],
             "run_at": "document_start"
         }
     ],
 
     "web_accessible_resources" : [{
-        "resources": ["content.js"],
+        "resources": ["contentScript.js"],
         "matches": ["https://*.support.casino/*", "https://support.casino/*", "https://support.casino.oxg.local/*"]
     }]
 }

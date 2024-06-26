@@ -1,0 +1,1 @@
+(()=>{const e=document.querySelector("[data-click]");console.log(e),e.addEventListener("click",(()=>{chrome.runtime.sendMessage({type:"TEST",target:"offscreen",data:"testing RTC"})}))})();

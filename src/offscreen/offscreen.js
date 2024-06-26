@@ -1,4 +1,6 @@
+import JsSip from "jssip";
 
+console.log(JsSip)
 let socket = null;
 let isDefaultConfigurationSent = false;
 let softphone = null;
@@ -80,6 +82,7 @@ const DEFAULT_CONFIGURATION = {
 //         .then(result => result);
 // }
 
+
 const initSession = (event) => {
     session = event.session;
 
@@ -154,6 +157,10 @@ class Softphone {
 chrome.runtime.onMessage.addListener((data , sender, sendResponse) => {
   const { type } = data;
   // INITIALIZATON OF SOFTPHONE
+  if(type === "TEST") {
+    console.log(data);
+  }
+
   if(type === "INITIALIZATION") {
     if(isDefaultConfigurationSent) return;
 

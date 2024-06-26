@@ -1,5 +1,6 @@
-const button = document.querySelector("button");
+const button = document.querySelector(`[data-click]`);
 
+console.log(button)
 button.addEventListener("click", () => {
     chrome.runtime.sendMessage({
         type: "TEST",

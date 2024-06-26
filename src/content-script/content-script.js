@@ -9,6 +9,15 @@ const T = {
     instance_id: null,
 }
 
+
+// chrome.storage.local.set({ key: "value" }).then(() => {
+//     console.log("Value is set");
+//   });
+  
+//   chrome.storage.local.get(["key"]).then((result) => {
+//     console.log("Value is " + result.key);
+//   });
+
 // function callToUser(call, {
 //     number,
 //     host,
