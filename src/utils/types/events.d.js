@@ -1,0 +1,6 @@
+export const EVENTS = {
+    INITIALIZATION: "INITIALIZATION",
+    OUTGOING_CALL: "OUTGOING_CALL",
+
+    _TEST: "_TEST",
+}

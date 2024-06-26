@@ -9,7 +9,6 @@ const T = {
     instance_id: null,
 }
 
-
 // chrome.storage.local.set({ key: "value" }).then(() => {
 //     console.log("Value is set");
 //   });
@@ -43,18 +42,18 @@ const T = {
 //         .then(result => result);
 // }
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    console.log(message)
-    if (message.type === "CHANGE") {
-        console.log(message)
-        DEFAULT_FLAGS.softphone = message.instanceId;
-    }
+// chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+//     console.log(message)
+//     if (message.type === "CHANGE") {
+//         console.log(message)
+//         DEFAULT_FLAGS.softphone = message.instanceId;
+//     }
 
-    if (message.type === "INTANCE_ID") {
-        console.log("message")
-        T.instance_id = `${message.instanceId}`;
-    }
-});
+//     if (message.type === "INTANCE_ID") {
+//         console.log("message")
+//         T.instance_id = `${message.instanceId}`;
+//     }
+// });
 
 window.addEventListener("message", function(event) {
   if(!event.data.type) return;
