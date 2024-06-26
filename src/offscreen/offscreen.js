@@ -1,6 +1,5 @@
-import JsSip from "jssip";
+import JsSIP from "jssip";
 
-console.log(JsSip)
 let socket = null;
 let isDefaultConfigurationSent = false;
 let softphone = null;
@@ -140,19 +139,19 @@ const handleAudio = (stream) => {
                 // });
 }
 
-class Softphone {
-  constructor() {
-    this.socket = new JsSIP.WebSocketInterface(`wss://${DEFAULT_CONFIGURATION.host}:8089/ws`);
-    DEFAULT_CONFIGURATION.configuration = {...data};
-    DEFAULT_CONFIGURATION.configuration.sockets = [this.socket];
-    DEFAULT_CONFIGURATION.host = data.host;
-    this._instanse = new JsSip.UA(DEFAULT_CONFIGURATION.configuration);
-    this.sessions = this._instanse.sessions;
-    this.session = {};
-    this._instanse.register();
-    this._instanse.start();
-  }
-}
+// class Softphone {
+//   constructor() {
+//     this.socket = new JsSIP.WebSocketInterface(`wss://${DEFAULT_CONFIGURATION.host}:8089/ws`);
+//     DEFAULT_CONFIGURATION.configuration = {...data};
+//     DEFAULT_CONFIGURATION.configuration.sockets = [this.socket];
+//     DEFAULT_CONFIGURATION.host = data.host;
+//     this._instanse = new JsSip.UA(DEFAULT_CONFIGURATION.configuration);
+//     this.sessions = this._instanse.sessions;
+//     this.session = {};
+//     this._instanse.register();
+//     this._instanse.start();
+//   }
+// }
 
 chrome.runtime.onMessage.addListener((data , sender, sendResponse) => {
   const { type } = data;
@@ -162,6 +161,7 @@ chrome.runtime.onMessage.addListener((data , sender, sendResponse) => {
   }
 
   if(type === "INITIALIZATION") {
+    console.log(isDefaultConfigurationSent)
     if(isDefaultConfigurationSent) return;
 
     socket = new JsSIP.WebSocketInterface("wss://sip1.hetzner.tst.oxtech.org:8089/ws");
