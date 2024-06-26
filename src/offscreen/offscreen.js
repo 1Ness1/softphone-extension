@@ -7,6 +7,7 @@ import { LOG_STATUSES } from "../utils/types/log.d";
 import { initSession } from "../utils/softphone/session";
 import { createAudioStream } from "../utils/softphone/audio";
 import { _settings } from "../utils/softphone/_settings";
+import { outgoingCall, hangUpCall } from "../utils/controls/controls";
 
 const DEFAULT_CONFIGURATION = {
   _mediaConstraints: {
@@ -26,10 +27,23 @@ const DEFAULT_CONFIGURATION = {
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   const { type } = data;
   // INITIALIZATON OF SOFTPHONE
+
+  if(type === EVENTS.HANG_UP_CALL) {
+    hangUpCall();
+  }
+
+  if(type === EVENTS.OUTGOING_CALL) {
+    outgoingCall({
+      number: data.number,
+      userData: data.userData,
+    });
+  }
+
   if (type === EVENTS._TEST) {
     console.log(data);
   }
 
+  // AFTER THIS EVENT ANYTHING WON'T WORK
   if (type === EVENTS.INITIALIZATION) {
     if (_settings.isSentDefaultConfigurationSent) return;
 
@@ -89,9 +103,5 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
     });
   }
 
-  if (type === EVENTS.OUTGOING_CALL) {
-    _settings.softphoneInstanse.call(`sip:${data.number}@${_settings.host}`, {
-      mediaConstraints: _settings._mediaConstraints,
-    });
-  }
+  
 });

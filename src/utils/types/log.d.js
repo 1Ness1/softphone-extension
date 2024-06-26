@@ -8,4 +8,5 @@ export const LOG_STATUSES = {
     RINGING: "Progress ... Ringing ... ",
     ANSWER: "Answer",
     NEW_AUDIO_STREAM: "New audio stream",
+    FAILED_HANG_UP: "Failed to hangup call. Error:",
 }

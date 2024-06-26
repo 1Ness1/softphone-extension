@@ -1,3 +1,5 @@
+import { EVENTS } from "../utils/types/events.d";
+
 const DEFAULT_FLAGS = {
     isInitialized: false,
     softphone: null,
@@ -64,7 +66,7 @@ window.addEventListener("message", function(event) {
 //       T.instance_id = event.data.instanceId;
 //   }
 
-    if(event.data.type === "INITIALIZATION") {
+    if(event.data.type === EVENTS.INITIALIZATION) {
         console.log(event.data)
 
         //   chrome.runtime.sendMessage({type: "INITIALIZATION"});
@@ -85,12 +87,17 @@ window.addEventListener("message", function(event) {
         //   }
 
         console.log(event.data.data )
-        chrome.runtime.sendMessage({type: "INITIALIZATION", ...event.data.data});
+        chrome.runtime.sendMessage({type: EVENTS.INITIALIZATION, ...event.data.data});
     }
 
-    if(event.data.type === "OUTGOING_CALL") {
+    if(event.data.type === EVENTS.OUTGOING_CALL) {
         console.log(event.data);
-        chrome.runtime.sendMessage({type: "OUTGOING_CALL", ...event.data.data});
+        chrome.runtime.sendMessage({type: EVENTS.OUTGOING_CALL, ...event.data.data});
+    }
+
+    if(event.data.type === EVENTS.HANG_UP_CALL) {
+        console.log(event.data);
+        chrome.runtime.sendMessage({type: EVENTS.HANG_UP_CALL});
     }
 
 //   if(event.data.type === "OUTGOING_CALL") {
