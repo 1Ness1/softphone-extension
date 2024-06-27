@@ -16,3 +16,9 @@ export const SOFTPHONE_STATUSES = {
   DISCONNECTED: "disconnected",
   NEW_RTC_SESSION: "newRTCSession",
 };
+
+export const TARGETS = {
+  SERVICE_WORKER: "service-worker",
+  OFFSCREEN: "Offscreen",
+  CONTENT_SCRIPT: "content-script",
+}

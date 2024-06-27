@@ -19,6 +19,7 @@ import { outgoingCall, hangUpCall } from "../utils/softphone/controls";
 
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   const { type } = data;
+  if(data["target"] === "background") return;
   // INITIALIZATON OF SOFTPHONE
 
   if (type === EVENTS.HANG_UP_CALL) {
@@ -40,10 +41,11 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   if (type === EVENTS.INITIALIZATION) {
     if (_settings.isSentDefaultConfigurationSent) return;
 
-    _settings.configuration.socket = new JsSIP.WebSocketInterface("wss://sip1.hetzner.tst.oxtech.org:8089/ws");
-    _settings.configuration = { ...data };
-    _settings.configuration.sockets = [_settings.configuration.socket];
     _settings.host = data.host;
+    _settings.socket = new JsSIP.WebSocketInterface(`wss://${_settings.host}:8089/ws`);
+    _settings.configuration = { ...data };
+    _settings.configuration.sockets = [_settings.socket];
+    
     _settings.softphoneInstanse = new JsSIP.UA(_settings.configuration);
 
     _settings.sessions = _settings.softphoneInstanse._sessions;
@@ -66,6 +68,7 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
     });
 
     _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.REGISTERED, function (e) {
+      _settings.isSentDefaultConfigurationSent = true;
       console.log(LOG_STATUSES.REGISTRATION_COMPLETED);
       console.log(e);
     });

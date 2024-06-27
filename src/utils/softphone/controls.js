@@ -2,7 +2,7 @@ import { _settings } from "./_settings";
 import { EVENTS } from "../types/events.d";
 import { LOG_STATUSES } from "../types/log.d";
 import { usePlayerData } from "../api/usePlayerData";
-
+import { TARGETS } from "../types/types.d";
 export const outgoingCall = async ({
     number,
     userData,
@@ -17,8 +17,11 @@ export const outgoingCall = async ({
     console.log(playersData);
     // _settings.softphoneInstanse.call(`sip:${number}@${_settings.host}`, {
     //     mediaConstraints: _settings._mediaConstraints,
-    //     ...userData
+    //     ...userData,
     // });
+
+    chrome.runtime.sendMessage({type: "OUTGOING_CALL_EXTENSION", data: playersData, target: TARGETS.SERVICE_WORKER});
+    // window.postMessage({type: "OUTGOING_CALL_EXTENSION", data: playersData});
 }
 
 export const answerCall = (event) => {

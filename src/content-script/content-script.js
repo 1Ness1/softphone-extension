@@ -8,7 +8,8 @@ import { EVENTS } from "../utils/types/events.d";
 //     console.log("Value is " + result.key);
 //   });
 
-window.addEventListener("message", function (event) {
+window.addEventListener("message", (event) => {
+  console.log(event);
   if (!event.data.type) return;
 
   if (event.data.type === EVENTS.INITIALIZATION) {
@@ -25,4 +26,13 @@ window.addEventListener("message", function (event) {
     console.log(event.data);
     chrome.runtime.sendMessage({ type: EVENTS.HANG_UP_CALL });
   }
+
+  if(event.data.type === "OUTGOING_CALL_EXTENSION") {
+    console.log(event.data);
+  }
 });
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log(request)
+  }
+);

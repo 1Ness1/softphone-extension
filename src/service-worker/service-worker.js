@@ -1,3 +1,6 @@
+import { TARGETS } from "../utils/types/types.d";
+import { EVENTS } from "../utils/types/events.d";
+
 const OFFSCREEN_DOCUMENT = "offscreen.html";
 
 let isCreatedOffscreenDocument = null;
@@ -34,29 +37,26 @@ const setupOffscreenDocument = async () => {
 
 const initialize = async () => {
   await setupOffscreenDocument();
-
-  chrome.runtime.sendMessage({
-    type: "RTC",
-    target: "offscreen",
-    data: "testing RTC",
-  });
 };
 
 initialize();
 
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.target !== "background") {
+  if (message.target !== TARGETS.SERVICE_WORKER) {
     return;
   }
 
-  // Dispatch the message to an appropriate handler.
-  switch (message.type) {
-    case "log":
-      // console.log("asdf")
-      // handleAddExclamationMarkResult(message.data);
-      // closeOffscreenDocument();
-      break;
-    default:
-      console.warn(`Unexpected message type received: '${message.type}'.`);
+  if (message.type === EVENTS.OUTGOING_CALL_EXTENSION) {
+    console.log(message);
+    // chrome.storage.local.set({ name });
+
+    chrome.tabs.query({}).then(result => {
+      result.forEach(element => {
+          if(element.url.includes("oxg.local")) {
+              console.log(element)
+               chrome.tabs.sendMessage(element.id, message.data)
+          }
+      })
+    })
   }
 });
