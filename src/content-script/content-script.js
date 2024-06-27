@@ -1,118 +1,28 @@
 import { EVENTS } from "../utils/types/events.d";
 
-const DEFAULT_FLAGS = {
-    isInitialized: false,
-    softphone: null,
-}
-
-let sockets = null;
-
-const T = {
-    instance_id: null,
-}
-
 // chrome.storage.local.set({ key: "value" }).then(() => {
 //     console.log("Value is set");
 //   });
-  
+
 //   chrome.storage.local.get(["key"]).then((result) => {
 //     console.log("Value is " + result.key);
 //   });
 
-// function callToUser(call, {
-//     number,
-//     host,
-//     brand,
-//     userId
-// }) {
-//     console.log(call)
-//     call(`sip:${number}@${host}`, {
-//         "extraHeaders": [`brand:${brand}`, `user_ud:${userId}`],
-//         "mediaConstraints": {
-//             "audio": true
-//         }
-//     })
-// // }``
+window.addEventListener("message", function (event) {
+  if (!event.data.type) return;
 
-// const requestToCallByUserId = ({
-//     brand,
-//     userId
-//                                }) => {
-//     const URL = `https://${window.location.host}/api_user_data_by_phone/phonebyId?brand=${brand}&user=${userId}`;
-//     return fetch(URL)
-//         .then(data => data.json())
-//         .then(result => result);
-// }
+  if (event.data.type === EVENTS.INITIALIZATION) {
+    console.log(event.data);
+    chrome.runtime.sendMessage({ type: EVENTS.INITIALIZATION, ...event.data.data });
+  }
 
-// chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-//     console.log(message)
-//     if (message.type === "CHANGE") {
-//         console.log(message)
-//         DEFAULT_FLAGS.softphone = message.instanceId;
-//     }
+  if (event.data.type === EVENTS.OUTGOING_CALL) {
+    console.log(event.data);
+    chrome.runtime.sendMessage({ type: EVENTS.OUTGOING_CALL, ...event.data.data });
+  }
 
-//     if (message.type === "INTANCE_ID") {
-//         console.log("message")
-//         T.instance_id = `${message.instanceId}`;
-//     }
-// });
-
-window.addEventListener("message", function(event) {
-  if(!event.data.type) return;
-//   const { host } = event.data.initialization;
-
-//   console.log(host)
-//   if(event.data.type === "INTANCE_ID") {
-//       T.instance_id = event.data.instanceId;
-//   }
-
-    if(event.data.type === EVENTS.INITIALIZATION) {
-        console.log(event.data)
-
-        //   chrome.runtime.sendMessage({type: "INITIALIZATION"});
-        //   const socket = new JsSIP.WebSocketInterface(`wss://${host}:8089/ws`);
-
-        //   DEFAULT_FLAGS.softphone =  new JsSIP.UA({
-        //       sockets: [socket],
-        //       ...event.data.initialization,
-        //       ...T.instance_id
-        //   });
-
-        //   if(!T.instance_id) {
-        //           console.log(DEFAULT_FLAGS.softphone)
-        //           chrome.runtime.sendMessage({type: "SET_INSTANCE_ID", instance: {
-        //               instanceId: DEFAULT_FLAGS.softphone.configuration.instance_id
-        //           }
-        //       });
-        //   }
-
-        console.log(event.data.data )
-        chrome.runtime.sendMessage({type: EVENTS.INITIALIZATION, ...event.data.data});
-    }
-
-    if(event.data.type === EVENTS.OUTGOING_CALL) {
-        console.log(event.data);
-        chrome.runtime.sendMessage({type: EVENTS.OUTGOING_CALL, ...event.data.data});
-    }
-
-    if(event.data.type === EVENTS.HANG_UP_CALL) {
-        console.log(event.data);
-        chrome.runtime.sendMessage({type: EVENTS.HANG_UP_CALL});
-    }
-
-//   if(event.data.type === "OUTGOING_CALL") {
-//       const {brand, userId} = event.data.userInformation;
-//       chrome.runtime.sendMessage({type: "OUTGOING_CALL"});
-//       requestToCallByUserId({
-//           brand,
-//           userId
-//       }).then((result) => {
-//           if(!DEFAULT_FLAGS.softphone) return;
-//           console.log(DEFAULT_FLAGS.softphone)
-//           callToUser(DEFAULT_FLAGS.softphone, {
-//               brand,
-//               userId
-//           })
-//       });
-//   }
+  if (event.data.type === EVENTS.HANG_UP_CALL) {
+    console.log(event.data);
+    chrome.runtime.sendMessage({ type: EVENTS.HANG_UP_CALL });
+  }
 });

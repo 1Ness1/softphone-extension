@@ -1,4 +1,4 @@
-import { _settings } from "../softphone/_settings";
+import { _settings } from "./_settings";
 import { EVENTS } from "../types/events.d";
 import { LOG_STATUSES } from "../types/log.d";
 
@@ -18,6 +18,14 @@ export const outgoingCall = ({
     });
 }
 
+export const answerCall = (event) => {
+    console.log(`ontrack: ${event.track.kind} - ${event.track.id} stream ${event.streams[0].id}`);
+    console.log(event);
+
+    event.streams.forEach((stream) => createAudioStream(stream));
+    // timer
+}
+
 export const hangUpCall = () => {
     try {
         if(_settings.currentSession["_connection"]) _settings.currentSession._connection.close();
@@ -28,4 +36,31 @@ export const hangUpCall = () => {
         _settings.currentSession = {};    
         // stop timer
     }
+}
+
+export const holdCall = () => {
+    if(_settings.onHold) {
+        _settings.currentSession.unhold();
+        _settings.onHold = false;
+        return;
+    }
+
+    _settings.currentSession.hold();
+    _settings.onHold = true;
+}
+
+export const muteCall = () => {
+    if(_settings.onMute) {
+        _settings.currentSession.unmute();
+        _settings.onMute = false;
+        return;
+    }
+
+    _settings.currentSession.mute();
+    _settings.onMute = true;
+}
+
+export const resetSettings = () => {
+    _settings.onHold = false;
+    _settings.onMute = false;
 }

@@ -7,32 +7,17 @@ import { LOG_STATUSES } from "../utils/types/log.d";
 import { initSession } from "../utils/softphone/session";
 import { createAudioStream } from "../utils/softphone/audio";
 import { _settings } from "../utils/softphone/_settings";
-import { outgoingCall, hangUpCall } from "../utils/controls/controls";
-
-const DEFAULT_CONFIGURATION = {
-  _mediaConstraints: {
-    audio: true,
-  },
-};
-
-// navigator.mediaDevices.getUserMedia({
-//     audio: {
-//       mandatory: {
-//         chromeMediaSource: 'tab',
-//         // chromeMediaSourceId: streamId
-//       }
-//     }
-//   })
+import { outgoingCall, hangUpCall } from "../utils/softphone/controls";
 
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   const { type } = data;
   // INITIALIZATON OF SOFTPHONE
 
-  if(type === EVENTS.HANG_UP_CALL) {
+  if (type === EVENTS.HANG_UP_CALL) {
     hangUpCall();
   }
 
-  if(type === EVENTS.OUTGOING_CALL) {
+  if (type === EVENTS.OUTGOING_CALL) {
     outgoingCall({
       number: data.number,
       userData: data.userData,
@@ -49,7 +34,7 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
 
     _settings.socket = new JsSIP.WebSocketInterface("wss://sip1.hetzner.tst.oxtech.org:8089/ws");
     _settings.configuration = { ...data };
-    _settings.configuration.sockets = [ _settings.socket ];
+    _settings.configuration.sockets = [_settings.socket];
     _settings.host = data.host;
     _settings.softphoneInstanse = new JsSIP.UA(_settings.configuration);
 
@@ -102,6 +87,4 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
       };
     });
   }
-
-  
 });

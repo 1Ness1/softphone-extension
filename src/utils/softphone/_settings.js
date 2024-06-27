@@ -6,5 +6,8 @@ export const _settings = {
     _mediaConstraints: {
         audio: true,
     },
+
+    onHold: false,
+    onMute: false,
     
 }

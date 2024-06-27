@@ -10,14 +10,14 @@ const hasDocument = async () => {
     }
   }
   return false;
-}
+};
 
-const setupOffscreenDocument = async (path = OFFSCREEN_DOCUMENT) => {
-  if(await hasDocument()) {
+const setupOffscreenDocument = async () => {
+  if (await hasDocument()) {
     return;
   }
 
-  if(isCreatedOffscreenDocument) {
+  if (isCreatedOffscreenDocument) {
     await isCreatedOffscreenDocument;
     return;
   }
@@ -25,12 +25,12 @@ const setupOffscreenDocument = async (path = OFFSCREEN_DOCUMENT) => {
   isCreatedOffscreenDocument = chrome.offscreen.createDocument({
     url: OFFSCREEN_DOCUMENT,
     reasons: ["WEB_RTC"],
-    justification: "testing web rtc soft phone"
-  })
+    justification: "testing web rtc soft phone",
+  });
 
   await isCreatedOffscreenDocument;
   isCreatedOffscreenDocument = null;
-}
+};
 
 const initialize = async () => {
   await setupOffscreenDocument();
@@ -38,21 +38,20 @@ const initialize = async () => {
   chrome.runtime.sendMessage({
     type: "RTC",
     target: "offscreen",
-    data: "testing RTC"
-  })
-}
+    data: "testing RTC",
+  });
+};
 
 initialize();
 
-
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.target !== 'background') {
+  if (message.target !== "background") {
     return;
   }
 
   // Dispatch the message to an appropriate handler.
   switch (message.type) {
-    case 'log':
+    case "log":
       // console.log("asdf")
       // handleAddExclamationMarkResult(message.data);
       // closeOffscreenDocument();
@@ -60,4 +59,4 @@ chrome.runtime.onMessage.addListener((message) => {
     default:
       console.warn(`Unexpected message type received: '${message.type}'.`);
   }
-})
+});
