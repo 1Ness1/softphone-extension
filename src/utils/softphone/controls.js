@@ -1,8 +1,9 @@
 import { _settings } from "./_settings";
 import { EVENTS } from "../types/events.d";
 import { LOG_STATUSES } from "../types/log.d";
+import { usePlayerData } from "../api/usePlayerData";
 
-export const outgoingCall = ({
+export const outgoingCall = async ({
     number,
     userData,
 }) => {
@@ -12,10 +13,12 @@ export const outgoingCall = ({
         return;
     }
 
-    _settings.softphoneInstanse.call(`sip:${number}@${_settings.host}`, {
-        mediaConstraints: _settings._mediaConstraints,
-        ...userData
-    });
+    const playersData = await usePlayerData(number);
+    console.log(playersData);
+    // _settings.softphoneInstanse.call(`sip:${number}@${_settings.host}`, {
+    //     mediaConstraints: _settings._mediaConstraints,
+    //     ...userData
+    // });
 }
 
 export const answerCall = (event) => {

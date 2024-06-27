@@ -9,6 +9,14 @@ import { createAudioStream } from "../utils/softphone/audio";
 import { _settings } from "../utils/softphone/_settings";
 import { outgoingCall, hangUpCall } from "../utils/softphone/controls";
 
+/** IDEAS:
+ * - create RE-initialization button on popup.
+ * - create api hook
+ * - create destroy hook
+ * - create audio listeners
+ * - create mute/hold listeners
+ */
+
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   const { type } = data;
   // INITIALIZATON OF SOFTPHONE
@@ -32,9 +40,9 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   if (type === EVENTS.INITIALIZATION) {
     if (_settings.isSentDefaultConfigurationSent) return;
 
-    _settings.socket = new JsSIP.WebSocketInterface("wss://sip1.hetzner.tst.oxtech.org:8089/ws");
+    _settings.configuration.socket = new JsSIP.WebSocketInterface("wss://sip1.hetzner.tst.oxtech.org:8089/ws");
     _settings.configuration = { ...data };
-    _settings.configuration.sockets = [_settings.socket];
+    _settings.configuration.sockets = [_settings.configuration.socket];
     _settings.host = data.host;
     _settings.softphoneInstanse = new JsSIP.UA(_settings.configuration);
 
