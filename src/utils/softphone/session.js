@@ -1,6 +1,7 @@
 import { _settings } from "./_settings";
 import { SESSIONS_TYPES } from "../types/types.d";
 import { LOG_STATUSES } from "../types/log.d";
+import { stopAudioCall } from "./audio";
 
 const checkActionSession = (timerDelay = 1000) => {
     const IS_NOT_EXISTS_ID = 0;
@@ -29,11 +30,13 @@ export const initSession = (event) => {
 
     _settings.currentSession.on(SESSIONS_TYPES.ENDED, (event) => {
       console.log(event);
+      stopAudioCall();
       _settings.currentSession = {}
     });
 
     _settings.currentSession.on(SESSIONS_TYPES.FAILED, (event) => {
       console.log(event);
+      stopAudioCall();
       _settings.currentSession = {}
     });
 

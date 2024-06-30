@@ -3,6 +3,7 @@ import { EVENTS } from "../types/events.d";
 import { LOG_STATUSES } from "../types/log.d";
 import { usePlayerData } from "../api/usePlayerData";
 import { TARGETS } from "../types/types.d";
+import { playAudioCall } from "./audio";
 export const outgoingCall = async ({
     number,
     userData,
@@ -15,12 +16,17 @@ export const outgoingCall = async ({
 
     const playersData = await usePlayerData(number);
     console.log(playersData);
-    // _settings.softphoneInstanse.call(`sip:${number}@${_settings.host}`, {
+    //_settings.currentSession = _settings.softphoneInstanse.call(`sip:${number}@${_settings.host}`, {
     //     mediaConstraints: _settings._mediaConstraints,
     //     ...userData,
     // });
+    // playAudioCall();
 
-    chrome.runtime.sendMessage({type: "OUTGOING_CALL_EXTENSION", data: playersData, target: TARGETS.SERVICE_WORKER});
+    chrome.runtime.sendMessage({
+        type: EVENTS.OUTGOING_CALL_EXTENSION, 
+        data: playersData, 
+        target: TARGETS.SERVICE_WORKER
+    });
     // window.postMessage({type: "OUTGOING_CALL_EXTENSION", data: playersData});
 }
 

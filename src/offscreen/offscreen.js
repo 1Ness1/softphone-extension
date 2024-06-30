@@ -1,6 +1,6 @@
 import JsSIP from "jssip";
 
-import { SOFTPHONE_STATUSES } from "../utils/types/types.d";
+import { SOFTPHONE_STATUSES, TARGETS } from "../utils/types/types.d";
 import { EVENTS } from "../utils/types/events.d";
 import { LOG_STATUSES } from "../utils/types/log.d";
 
@@ -19,7 +19,7 @@ import { outgoingCall, hangUpCall } from "../utils/softphone/controls";
 
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   const { type } = data;
-  if(data["target"] === "background") return;
+  if(data.target !== TARGETS.OFFSCREEN) return;
   // INITIALIZATON OF SOFTPHONE
 
   if (type === EVENTS.HANG_UP_CALL) {
@@ -58,33 +58,33 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
 
     _settings.isDefaultConfigurationSent = true;
 
-    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.CONNECTED, function (e) {
+    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.CONNECTED, (e) => {
       console.log(LOG_STATUSES.AGENT_CONNECTED);
       console.log(e);
     });
 
-    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.DISCONNECTED, function (event) {
+    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.DISCONNECTED, (event) => {
       console.log(LOG_STATUSES.AGENT_DISCONNECTED);
     });
 
-    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.REGISTERED, function (e) {
+    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.REGISTERED, (e) => {
       _settings.isSentDefaultConfigurationSent = true;
       console.log(LOG_STATUSES.REGISTRATION_COMPLETED);
       console.log(e);
     });
 
-    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.UNREGISTERED, function (e) {
+    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.UNREGISTERED, (e) => {
       console.log(LOG_STATUSES.REGISTRATION_CANCEL);
       console.log(e);
     });
 
-    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.REGISTRATION_FAILED, function (e) {
+    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.REGISTRATION_FAILED, (e) => {
       console.log(LOG_STATUSES.REGISTRATION_FAILED);
       console.log(e);
     });
 
     // TODO: MOVE EVENT TO METHOD
-    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.NEW_RTC_SESSION, function (rtcSessionEvent) {
+    _settings.softphoneInstanse.on(SOFTPHONE_STATUSES.NEW_RTC_SESSION, (rtcSessionEvent) => {
       console.log(LOG_STATUSES.NEW_SESSION);
       console.log(rtcSessionEvent);
 

@@ -18,7 +18,10 @@ export const SOFTPHONE_STATUSES = {
 };
 
 export const TARGETS = {
+  TARGET: "target",
   SERVICE_WORKER: "service-worker",
-  OFFSCREEN: "Offscreen",
+  OFFSCREEN: "offscreen",
   CONTENT_SCRIPT: "content-script",
+  WEB: "web",
+  VUE: "vue",
 }

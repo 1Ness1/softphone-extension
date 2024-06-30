@@ -1,3 +1,4 @@
+import { _settings } from "./_settings";
 import { LOG_STATUSES } from "../types/log.d";
 // const handleAudio = (stream) => {
 //     console.log(LOG_STATUSES.NEW_AUDIO_STREAM);
@@ -43,3 +44,20 @@ export const createAudioStream = (audioStream) => {
     insertAudioToDomElement(createAudio(audioStream))
 }
 
+export const playAudioCall = () => {
+    _settings.audioCall.loop = true;
+    _settings.audioCall.play().catch(() => console.error("Chrome cannot play sound without user interaction first"));
+}
+
+export const playAudioRing = () => {
+    _settings.audioRing.loop = true;
+    _settings.audioRing.play().catch(() => console.error(`Chrome cannot play sound without user interaction first`));
+}
+
+export const stopAudioCall = () => {
+    if(_settings.audioCall) _settings.audioCall.pause();
+}
+
+export const stopAudioRing = () => {
+    if(_settings.audioRing) _settings.audioRing.pause();
+}

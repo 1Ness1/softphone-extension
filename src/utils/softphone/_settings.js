@@ -8,4 +8,7 @@ export const _settings = {
 
     onHold: false,
     onMute: false,
+
+    audioCall: new Audio(chrome.runtime.getURL(`/audio/call.mp3`)),
+    audioRing: new Audio(chrome.runtime.getURL(`./audio/beeps.mp3`)),
 }

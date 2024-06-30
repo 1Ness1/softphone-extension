@@ -42,7 +42,7 @@ const initialize = async () => {
 initialize();
 
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.target !== TARGETS.SERVICE_WORKER) {
+  if (message?.target !== TARGETS.SERVICE_WORKER) {
     return;
   }
 
@@ -54,7 +54,10 @@ chrome.runtime.onMessage.addListener((message) => {
       result.forEach(element => {
           if(element.url.includes("oxg.local")) {
               console.log(element)
-               chrome.tabs.sendMessage(element.id, message.data)
+               chrome.tabs.sendMessage(element.id, {
+                target: TARGETS.CONTENT_SCRIPT,
+                data: message.data
+               })
           }
       })
     })
